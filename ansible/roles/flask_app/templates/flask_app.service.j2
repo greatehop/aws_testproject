@@ -1,0 +1,14 @@
+[Unit]
+Description=Flask App
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ app_path }}
+ExecStart={{ app_path }}/venv/bin/python {{ app_path }}/run.py
+Restart=always
+RestartSec={{ app_settings_init_timeout }}
+
+[Install]
+WantedBy=multi-user.target

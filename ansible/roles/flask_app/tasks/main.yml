@@ -1,0 +1,98 @@
+- name: Install requirements
+  apt:
+    name: '{{ item }}'
+    state: installed
+    update_cache: yes
+    force: yes
+  with_items:
+    - python-virtualenv
+    #- python-mysqldb
+    #- python-dev
+    #- nginx
+    #- uwsgi
+    #- uwsgi-plugin-python
+
+- name: Create app user/group
+  user:
+    name: '{{ app_user }}'
+    append: yes
+    shell: /bin/bash
+
+- name: Cleanup previous app installation
+  file:
+    state: absent
+    dest: '{{ app_path }}'
+    force: yes
+
+- name: Create dirs
+  file:
+    name: '{{ item }}'
+    state: directory
+    recurse: true
+  with_items:
+    - '{{ app_path }}/tmp'
+    - '/home/{{ app_user }}/.aws'
+
+- name: Copy app
+  copy:
+    src: '{{ app_path_src }}'
+    dest: '{{ app_path }}'
+    owner: '{{ app_user }}'
+    group: '{{ app_group }}'
+    mode: 0755
+
+- name: Copy service account key
+  copy:
+    src: '{{ aws_creds_src }}'
+    dest: '{{ aws_creds_dst }}'
+    owner: '{{ app_user }}'
+    group: '{{ app_group }}'
+    mode: 0400
+
+- name: Update settings.py
+  template:
+    src: settings.py.j2
+    dest: '{{ app_path }}/settings.py'
+
+- name: Update permissions
+  file:
+    name: '{{ app_path }}'
+    owner: '{{ app_user }}'
+    group: '{{ app_group }}'
+    state: directory
+    recurse: true
+
+- name: Create log file
+  file:
+    name: '{{ app_path_log }}'
+    owner: '{{ app_user }}'
+    group: '{{ app_group }}'
+    mode: 0644
+    state: touch
+
+- name: Create venv and install requirements
+  pip:
+    requirements: '{{ app_path }}/requirements.txt'
+    virtualenv: '{{ app_path }}/venv'
+  become_user: '{{ app_user }}'
+
+- name: Create logrotate rule
+  template:
+    src: flask_app_logrotate.j2
+    dest: '{{ app_path_logrotate }}'
+
+- name: Create systemd unit for Flask_app service
+  template:
+    src: flask_app.service.j2
+    dest: '{{ app_path_systemd }}'
+
+- name: Enable and launch Flask_app service
+  systemd:
+    name: flask_app
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+
+#- name: Link to Flask_app
+#  debug:
+#    msg: "Link to Flask App -  http://{{ ansible_all_ipv4_addresses[0] }}:{{ app_settings_port }}"

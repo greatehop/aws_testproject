@@ -1,0 +1,22 @@
+###################################
+# AWS settings
+###################################
+
+s3_bucket_name = 'test_bucket1'
+sqs_queue_name = 'test_queue1'
+rds_user = ''
+
+###################################
+# App settings
+###################################
+
+path_log = '{{ app_path_log }}'
+log_level = '{{ app_settings_log_level }}'
+
+flask_args = {
+    'host': '{{ app_settings_host }}',
+    'port': {{ app_settings_port }}
+}
+
+polling_timeout = {{ app_settings_polling_timeout }}
+init_timeout = {{ app_settings_init_timeout }}

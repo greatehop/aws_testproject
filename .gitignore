@@ -1,0 +1,8 @@
+*.db
+*.pyc
+.idea
+*.iml
+*.log
+.DS_Store
+venv/
+.vagrant

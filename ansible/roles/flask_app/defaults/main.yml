@@ -1,0 +1,16 @@
+aws_creds_src: '../../../credentials'
+aws_creds_dst: '/home/{{ app_user }}/.aws/credentials'
+
+app_path_logrotate: '/etc/logrotate.d/flask_app'
+app_path_systemd: '/etc/systemd/system/flask_app.service'
+app_path_src: '../../../flask_app/'
+app_path: '/opt/flask_app'
+app_path_log: '/var/log/flask_app.log'
+app_user: 'test1'
+app_group: 'test1'
+
+app_settings_host: '0.0.0.0'
+app_settings_port: 8080
+app_settings_log_level: 'INFO'
+app_settings_polling_timeout: 15
+app_settings_init_timeout: 5
