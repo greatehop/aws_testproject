@@ -4,5 +4,9 @@
 *.iml
 *.log
 .DS_Store
+terraform.tfstate*
+*.retry
+.venv/
 venv/
-.vagrant
+.vagrant/
+.terraform/
