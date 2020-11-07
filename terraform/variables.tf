@@ -4,6 +4,23 @@ variable "region" {
   default     = "eu-west-1"
 }
 
+variable "aws_credentials" {
+  description = "Path to AWS credentials file"
+  type        = string
+  default     = "../credentials"
+}
+
+variable "ssh_key" {
+  description = "SSH keys config"
+  type        = map
+
+  default     = {
+    name      = "ssh_key"
+    public    = "~/.ssh/id_rsa.pub"
+    private   = "~/.ssh/id_rsa"
+  }
+}
+
 variable "instance_conf" {
   description = "EC2 instance config"
   type        = map
@@ -12,6 +29,7 @@ variable "instance_conf" {
     ami       = "ami-0823c236601fef765"
     type      = "t2.micro"
     name      = "flaskapp-instance"
+    user      = "ubuntu"
   }
 }
 
@@ -27,3 +45,8 @@ variable "queue_name" {
   default     = "s3-event-notification-queue"
 }
 
+variable "security_group_name" {
+  description = "The name of the security group"
+  type        = string
+  default     = "flask-instance"
+}
