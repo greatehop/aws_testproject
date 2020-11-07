@@ -41,24 +41,24 @@ terraform init
 terraform apply
 ```
 
-Deploy FlaskApp via Ansible
+Open FlaskApp in browser
 ```
-cd aws_testproject
-ansible-playbook -i ./ansible/inventory ansible/flask_app_playbook.yml
+echo "http://$(terraform output public_ip)"
 ```
-
-Open FlaskApp http://<instnace_ip>:<port>/
-
 
 ## Alternatives
 
-For running FlaskApp you can use Vagrant instead of EC2
+To run FlaskApp locally instead of EC2 you can use:
+
+Vagrant + Virtualbox
 ```
 cd aws_testproject
 vagrant up
 ```
 
-or your localhost
+or
+
+localhost
 ```
 cd aws_testproject/
 virtualenv venv
@@ -67,8 +67,16 @@ pip install -r flask_app/requirements.txt
 python flask_app/run.py
 ```
 
-NOTE: both solution above still require for AWS SQS/S3/RDS sevices.
+NOTE: both of the above solution still require for AWS SQS/S3/RDS services.
 
+## Other
+
+Provision via Terraform or Vagrant automatically runs Ansible that deploy Flask
+application, but you can run it manually (update USER and IP)
+```
+cd aws_testproject/ansible
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u '<USER>' -i '<IP>,' flask_app_playbook.yml
+```
 
 ## TODO
 
@@ -79,17 +87,21 @@ FlaskApp:
 
 * add handlers for sqs/rds/s3
 
-* check behaviour with unavailable s3/sqs/ec2
+* change Flask UI (filename/datetime and records)
+
+* add daemon status
+
+* fix code: pass config var to object
 
 * change db to mysql
 
-* update README
-
 * add test upload file
 
-* change Flask UI (filename/datetime and records)
+* update README: "how daemon works" and "how everything works"
 
-* fix code: pass config var to object
+* add linter
+
+* RDS or SQLite
 
 ----
 
@@ -103,24 +115,21 @@ Infra:
 
 * WSGI server ?
 
-* fix vagrant
+* Docker file ?
 
 ----
 
 Terraform:
 
-* test terraform
-
-* add ssh key
+* add rds
 
 * service account ?
 get creds from EC2 instance metadata
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#attach-iam-role
 
+* valid IAM ?
+
 * get rid of duplication of aws vars (sqs, buckets) in terraform and ansible
 
-* run ansible from terraform
-
-* valid IAM ?
 ```
